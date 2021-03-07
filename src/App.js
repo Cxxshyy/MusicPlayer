@@ -40,7 +40,7 @@ function App() {
         timeUpdateHandler={timeUpdateHandler}
         songs={songs}
         setCurrentSong={setCurrentSong}
-        setSongs={setSong}
+        setSongs={setSongs}
       />
       <Library
         libraryStatus={libraryStatus}
