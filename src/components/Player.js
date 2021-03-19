@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { playAudio } from "../util";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlay,
@@ -58,19 +57,20 @@ const Player = ({
     setSongInfo({ ...songInfo, currentTime: newTime });
     audioRef.current.currentTime = newTime;
   };
-  const skipTrackerHandler = (direction) => {
+  const skipTrackerHandler = async (direction) => {
     let currentIndex = songs.findIndex((song) => song.id === currentSong.id);
     if (direction === "skip-forward") {
-      setCurrentSong(songs[(currentIndex + 1) % songs.length]);
+      await setCurrentSong(songs[(currentIndex + 1) % songs.length]);
     } else if (direction === "skip-back") {
       if (currentIndex === 0) {
-        setCurrentSong(songs[songs.length - 1]);
-        playAudio(isPlaying, audioRef);
+        await setCurrentSong(songs[songs.length - 1]);
+        if (isPlaying) audioRef.current.play();
+
         return;
       }
-      setCurrentSong(songs[currentIndex - 1]);
+      await setCurrentSong(songs[currentIndex - 1]);
     }
-    playAudio(isPlaying, audioRef);
+    if (isPlaying) audioRef.current.play();
   };
   //Add the styles
   const trackAnim = {
@@ -80,7 +80,12 @@ const Player = ({
     <div className="player">
       <div className="time-control">
         <p>{getTime(songInfo.currentTime)}</p>
-        <div className="track">
+        <div
+          style={{
+            background: `linear-gradient(to right, ${currentSong.color[0]}, ${currentSong.color[1]} )`,
+          }}
+          className="track"
+        >
           <input
             min={0}
             max={songInfo.duration || 0}
